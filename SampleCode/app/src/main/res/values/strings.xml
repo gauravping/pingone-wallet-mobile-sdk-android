@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">PingOne Wallet Sample</string>
+
+    <string name="init_create_profile">Create Profile</string>
+
+    <string name="profile_capture_selfie">Capture Selfie</string>
+    <string name="profile_create_instruction">Please enter the information required to create your profile.</string>
+    <string name="profile_first_name">First Name</string>
+    <string name="profile_last_name">Last Name</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_first_name_placeholder">Enter your First Name</string>
+    <string name="profile_last_name_placeholder">Enter your Last Name</string>
+    <string name="profile_email_placeholder">Enter your email</string>
+    <string name="profile_create">Create Profile</string>
+    <string name="profile_update">Update Profile</string>
+
+    <string name="delete_claim">Delete Credential</string>
+
+    <string name="item_card_revoked">Credential revoked</string>
+    <string name="general_expired_at">Credential revoked on %1$s</string>
+
+    <string name="main_scan_qr">Scan QR</string>
+
+    <string name="qr_scan_instruction">Scan the PingOne QR Code</string>
+
+    <string name="error_missing_info">Missing Information</string>
+    <string name="error_init_problem">Initialization problem:</string>
+
+    <string name="dialog_share_message">Please confirm to share your %1$s.</string>
+    <string name="dialog_pairing_message">Please confirm to pair your wallet to receive a credential.</string>
+    <string name="dialog_share_confirm">Share</string>
+    <string name="dialog_share_cancel">Cancel</string>
+    <string name="dialog_choose_document">Choose document you want to share:</string>
+
+    <string name="dialog_confirm">Ok</string>
+    <string name="button_confirm">Confirm</string>
+    <string name="type_verifiable_credential">Verifiable Credential</string>
+
+</resources>

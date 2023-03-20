@@ -1,0 +1,87 @@
+plugins {
+    id 'com.android.application'
+//    TODO: Uncomment to use push notifications
+//    id 'com.google.gms.google-services'
+}
+
+android {
+    compileSdk 33
+
+    buildFeatures {
+        dataBinding true
+    }
+
+    defaultConfig {
+        applicationId "com.pingidentity.PingOneWalletSample"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: '../../SDK/', include: ['*.aar'], exclude: [])
+
+    implementation 'org.bitbucket.b_c:jose4j:0.8.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+
+    implementation 'com.google.android.material:material:1.7.0'
+
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.annotation:annotation:1.5.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.camera:camera-camera2:1.2.0'
+    implementation 'androidx.camera:camera-core:1.2.0'
+    implementation 'androidx.camera:camera-view:1.2.0'
+    implementation 'androidx.camera:camera-lifecycle:1.1.0'
+    implementation 'androidx.security:security-crypto:1.1.0-alpha04'
+    implementation 'androidx.security:security-identity-credential:1.0.0-alpha03'
+    implementation 'androidx.biometric:biometric:1.1.0'
+
+    implementation 'com.google.android.gms:play-services-mlkit-barcode-scanning:18.1.0'
+    implementation 'com.google.firebase:firebase-messaging:23.1.1'
+
+    implementation 'com.squareup.retrofit2:converter-moshi:2.7.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.7.2'
+    implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp-urlconnection:4.9.3'
+    implementation 'com.squareup.moshi:moshi:1.14.0'
+    implementation 'com.squareup.moshi:moshi-adapters:1.14.0'
+
+    implementation 'io.github.erdtman:java-json-canonicalization:1.1'
+
+    implementation 'com.caverock:androidsvg-aar:1.4'
+
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.12'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+
+    implementation 'com.google.dagger:dagger:2.44.2'
+    implementation 'com.google.dagger:dagger-android:2.44.2'
+    implementation 'com.google.dagger:dagger-android-support:2.44.2'
+
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.31.2'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.44.2'
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+
+}
+// TODO: Uncomment to use push notifications
+// apply plugin: 'com.google.gms.google-services'
