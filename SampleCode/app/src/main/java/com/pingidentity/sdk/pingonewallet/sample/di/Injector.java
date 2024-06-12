@@ -2,7 +2,9 @@ package com.pingidentity.sdk.pingonewallet.sample.di;
 
 import com.pingidentity.sdk.pingonewallet.sample.di.component.AppComponent;
 import com.pingidentity.sdk.pingonewallet.sample.di.component.DaggerAppComponent;
-import com.pingidentity.sdk.pingonewallet.sample.di.module.AppModule;
+import com.pingidentity.sdk.pingonewallet.sample.di.component.DaggerAppComponent;
+import com.pingidentity.sdk.pingonewallet.sample.di.module.PingOneWalletHelperModule;
+import com.pingidentity.sdk.pingonewallet.sample.wallet.PingOneWalletHelper;
 
 public class Injector {
 
@@ -12,9 +14,9 @@ public class Injector {
 
     }
 
-    public static void initializeAppComponent() {
+    public static void initializeAppComponent(PingOneWalletHelper helper) {
         mAppComponent = DaggerAppComponent.builder()
-                .appModule(new AppModule())
+                .pingOneWalletHelperModule(new PingOneWalletHelperModule(helper))
                 .build();
     }
 

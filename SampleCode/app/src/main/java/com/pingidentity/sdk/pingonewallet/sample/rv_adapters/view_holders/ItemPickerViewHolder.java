@@ -6,8 +6,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pingidentity.did.sdk.types.Claim;
 import com.pingidentity.sdk.pingonewallet.sample.databinding.ItemPickerBinding;
-import com.pingidentity.sdk.pingonewallet.sample.ui.item_picker.ItemPickerFragment;
+import com.pingidentity.sdk.pingonewallet.sample.models.Credential;
 import com.pingidentity.sdk.pingonewallet.sample.utils.BitmapUtil;
+import com.pingidentity.sdk.pingonewallet.types.ClaimKeys;
+
+import java.util.function.Consumer;
 
 public class ItemPickerViewHolder extends RecyclerView.ViewHolder {
 
@@ -18,11 +21,11 @@ public class ItemPickerViewHolder extends RecyclerView.ViewHolder {
         this.mBinding = binding;
     }
 
-    public void bind(Claim claim, ItemPickerFragment.ItemPickerListener itemPickerListener) {
-        String type = String.valueOf(claim.getData().get("CardType"));
-        Bitmap image = BitmapUtil.getBitmapFromClaim(claim);
+    public void bind(Credential credential, Consumer<Claim> onResult) {
+        String type = credential.getClaim().getData().get(ClaimKeys.cardType);
+        Bitmap image = BitmapUtil.getBitmapFromClaim(credential.getClaim());
         mBinding.txtCardType.setText(type);
         mBinding.imgCard.setImageBitmap(image);
-        mBinding.layout.setOnClickListener(view -> itemPickerListener.onItemPicked(claim));
+        mBinding.layout.setOnClickListener(view -> onResult.accept(credential.getClaim()));
     }
 }

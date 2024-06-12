@@ -6,13 +6,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.pingidentity.sdk.pingonewallet.sample.di.Injector;
+import com.pingidentity.sdk.pingonewallet.sample.wallet.PingOneWalletHelper;
+import com.pingidentity.sdk.pingonewallet.storage.data_repository.DataRepository;
 
 public class MainApplication extends Application {
 
     private final MutableLiveData<String> receivedUrl = new MutableLiveData<>();
 
-    public void initDagger() {
-        Injector.initializeAppComponent();
+    public void initDagger(PingOneWalletHelper helper) {
+        Injector.initializeAppComponent(helper);
         Injector.getAppComponent().inject(this);
     }
 

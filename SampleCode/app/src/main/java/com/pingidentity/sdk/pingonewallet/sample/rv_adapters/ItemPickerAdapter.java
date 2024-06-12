@@ -8,19 +8,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pingidentity.did.sdk.types.Claim;
 import com.pingidentity.sdk.pingonewallet.sample.databinding.ItemPickerBinding;
+import com.pingidentity.sdk.pingonewallet.sample.models.Credential;
 import com.pingidentity.sdk.pingonewallet.sample.rv_adapters.view_holders.ItemPickerViewHolder;
-import com.pingidentity.sdk.pingonewallet.sample.ui.item_picker.ItemPickerFragment;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ItemPickerAdapter extends RecyclerView.Adapter<ItemPickerViewHolder> {
 
-    private final List<Claim> mClaimList;
-    private final ItemPickerFragment.ItemPickerListener mItemPickerListener;
+    private final List<Credential> credentials;
+    private final Consumer<Claim> onResult;
 
-    public ItemPickerAdapter(List<Claim> data, ItemPickerFragment.ItemPickerListener itemPickerListener) {
-        this.mClaimList = data;
-        this.mItemPickerListener = itemPickerListener;
+    public ItemPickerAdapter(List<Credential> data, Consumer<Claim> onResult) {
+        this.credentials = data;
+        this.onResult = onResult;
     }
 
     @NonNull
@@ -33,12 +34,12 @@ public class ItemPickerAdapter extends RecyclerView.Adapter<ItemPickerViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ItemPickerViewHolder holder, int position) {
-        holder.bind(mClaimList.get(position), mItemPickerListener);
+        holder.bind(credentials.get(position), onResult);
     }
 
     @Override
     public int getItemCount() {
-        return mClaimList.size();
+        return credentials.size();
     }
 
 }

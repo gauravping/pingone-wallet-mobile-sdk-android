@@ -12,14 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.viewbinding.ViewBinding;
 
-import com.pingidentity.sdk.pingonewallet.sample.R;
 import com.pingidentity.sdk.pingonewallet.sample.di.Injector;
 import com.pingidentity.sdk.pingonewallet.sample.di.component.DaggerFragmentComponent;
 import com.pingidentity.sdk.pingonewallet.sample.di.component.FragmentComponent;
 import com.pingidentity.sdk.pingonewallet.sample.di.module.FragmentModule;
-import com.pingidentity.sdk.pingonewallet.sample.utils.NotificationUtil;
+import com.pingidentity.sdk.pingonewallet.sample.models.navigation.NavigationCommand;
 
 import javax.inject.Inject;
 
@@ -27,8 +27,6 @@ public abstract class BaseFragment<T extends ViewBinding, V extends BaseViewMode
 
     @Inject
     protected V mViewModel;
-    @Inject
-    protected NotificationUtil mNotificationUtil;
 
     private T mViewDataBinding;
 
@@ -43,37 +41,17 @@ public abstract class BaseFragment<T extends ViewBinding, V extends BaseViewMode
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.mViewDataBinding = this.performBinding(inflater, container);
+        observeNavigation();
         return mViewDataBinding.getRoot();
     }
 
     public abstract T performBinding(@NonNull LayoutInflater inflater, ViewGroup container);
 
-    public T getViewBinding() {
-        return mViewDataBinding;
-    }
-
-    public void showAlert(int title, int message) {
-        showAlert(getString(title), getString(message));
-    }
-
-    public void showAlert(String title, String message) {
-        mNotificationUtil.showAlert(title, message);
-    }
-
     public abstract void performDependencyInjection(FragmentComponent buildComponent);
 
-    private FragmentComponent getBuildComponent() {
-        return DaggerFragmentComponent.builder()
-                .appComponent(Injector.getAppComponent())
-                .fragmentModule(new FragmentModule(this))
-                .build();
-    }
 
-    public void replaceFragment(Fragment fragment) {
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment, fragment.getClass().getCanonicalName())
-                .addToBackStack(null)
-                .commit();
+    public T getViewBinding() {
+        return mViewDataBinding;
     }
 
     public boolean isNetworkConnected() {
@@ -88,6 +66,30 @@ public abstract class BaseFragment<T extends ViewBinding, V extends BaseViewMode
             }
         }
         return false;
+    }
+
+    private void observeNavigation() {
+        mViewModel.getNavigation().observe(getViewLifecycleOwner(), navigationCommandEvent -> {
+            NavigationCommand navigationCommand = navigationCommandEvent.getContentIfNotHandled();
+            if (navigationCommand != null) {
+                handleNavigation(navigationCommand);
+            }
+        });
+    }
+
+    private void handleNavigation(NavigationCommand navCommand) {
+        if(navCommand instanceof NavigationCommand.ToDirection){
+            Navigation.findNavController(mViewDataBinding.getRoot()).navigate(((NavigationCommand.ToDirection) navCommand).directions);
+        } else if(navCommand instanceof NavigationCommand.Back){
+            Navigation.findNavController(mViewDataBinding.getRoot()).navigateUp();
+        }
+    }
+
+    private FragmentComponent getBuildComponent() {
+        return DaggerFragmentComponent.builder()
+                .appComponent(Injector.getAppComponent())
+                .fragmentModule(new FragmentModule(this))
+                .build();
     }
 
 }

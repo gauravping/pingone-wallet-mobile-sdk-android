@@ -8,16 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="gray_button">@android:color/darker_gray</color>
     <color name="app_color">#458EBF</color>
     <color name="gray_border">#979797</color>
-
     <color name="button_white">#fefefe</color>
-
     <color name="gray_card_background">#B1BCBE</color>
     <color name="card_gray">#f4f4fa</color>
-
-    <color name="profile_color">#ebebeb</color>
-    <color name="profile_divider">#979797</color>
     <color name="icon_grey">#494946</color>
+
 </resources>

@@ -3,7 +3,6 @@ package com.pingidentity.sdk.pingonewallet.sample.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.util.Base64;
 import android.util.Log;
 
@@ -12,7 +11,6 @@ import androidx.annotation.NonNull;
 import com.caverock.androidsvg.SVG;
 import com.pingidentity.did.sdk.types.Claim;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +24,7 @@ public class BitmapUtil {
         throw new IllegalStateException("Utility class");
     }
 
-    public static List<String> getImageKeys(){
+    public static List<String> getImageKeys() {
         return imageKeys;
     }
 
@@ -45,12 +43,6 @@ public class BitmapUtil {
             Log.e("TAG", "Failed to parse svg from String", e);
             return null;
         }
-    }
-
-    public static String bitmapToBase64(Bitmap bitmap) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-        return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
     }
 
     public static Bitmap getBitmapFromClaim(Claim claim) {

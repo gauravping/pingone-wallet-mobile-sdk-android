@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.pingidentity.sdk.pingonewallet.sample">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
 
     <application
         android:name=".MainApplication"
@@ -32,32 +34,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- TODO: Uncomment to use android deep links
-
             <intent-filter android:autoVerify="true">
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <action android:name="android.intent.action.VIEW" />
 
-                TODO: Set values to use deep links in android
                 <data
-                    android:host="example.com"
-                    android:pathPrefix="/example"
+                    android:host="shocard.pingone.com"
+                    android:pathPrefix="/appopen"
                     android:scheme="https" />
             </intent-filter>
-                        -->
 
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="openid-vc"/>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="openid-vc" />
             </intent-filter>
 
         </activity>
-
-        <!-- TODO: Uncomment to use push notifications
 
         <service
             android:name=".notifications.PingOneNotificationService"
@@ -67,7 +65,6 @@
             </intent-filter>
         </service>
 
-        -->
     </application>
 
 </manifest>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.pingidentity.sdk.pingonewallet.sample.ui.home.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_homeFragment_to_credentialDetailsFragment"
+            app:destination="@id/credentialDetailsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_qrScannerFragment"
+            app:destination="@id/qrScannerFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_itemPickerFragment"
+            app:destination="@id/itemPickerFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/credentialDetailsFragment"
+        android:name="com.pingidentity.sdk.pingonewallet.sample.ui.credential_details.CredentialDetailsFragment"
+        android:label="CredentialDetailsFragment"
+        tools:layout="@layout/fragment_credential_details">
+
+        <argument
+            android:name="credential"
+            app:argType="com.pingidentity.sdk.pingonewallet.sample.models.Credential" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/qrScannerFragment"
+        android:name="com.pingidentity.sdk.pingonewallet.sample.ui.qr_scanner.QrScannerFragment"
+        android:label="QrScannerFragment"
+        tools:layout="@layout/fragment_qr_scanner" />
+
+    <fragment
+        android:id="@+id/itemPickerFragment"
+        android:name="com.pingidentity.sdk.pingonewallet.sample.ui.picker.PickerFragment"
+        android:label="ItemPickerFragment"
+        tools:layout="@layout/fragment_picker">
+
+        <argument
+            android:name="credentialsList"
+            app:argType="com.pingidentity.sdk.pingonewallet.sample.models.Credential[]" />
+
+    </fragment>
+
+</navigation>

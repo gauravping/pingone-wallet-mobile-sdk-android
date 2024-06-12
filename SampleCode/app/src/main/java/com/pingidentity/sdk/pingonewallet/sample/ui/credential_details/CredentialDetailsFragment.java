@@ -2,7 +2,6 @@ package com.pingidentity.sdk.pingonewallet.sample.ui.credential_details;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.pingidentity.sdk.pingonewallet.sample.callbacks.CredentialDetailsListener;
+import com.pingidentity.sdk.pingonewallet.sample.R;
 import com.pingidentity.sdk.pingonewallet.sample.databinding.FragmentCredentialDetailsBinding;
 import com.pingidentity.sdk.pingonewallet.sample.di.component.FragmentComponent;
 import com.pingidentity.sdk.pingonewallet.sample.models.Credential;
@@ -26,30 +25,23 @@ public class CredentialDetailsFragment extends BaseFragment<FragmentCredentialDe
 
     public static final String TAG = CredentialDetailsFragment.class.getCanonicalName();
 
-    private Credential mCredential;
-    private String mActionLabel;
-    private CredentialDetailsListener mAction;
-
-    public static CredentialDetailsFragment newInstance(Credential credential, String actionLabel, CredentialDetailsListener action) {
-        CredentialDetailsFragment credentialDetailsFragment = new CredentialDetailsFragment();
-        credentialDetailsFragment.mCredential = credential;
-        credentialDetailsFragment.mActionLabel = actionLabel;
-        credentialDetailsFragment.mAction = action;
-        return credentialDetailsFragment;
-    }
+    public enum CredentialDetailsAction {ACCEPT, DELETE}
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setClaimData(mCredential);
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+        Credential credential = CredentialDetailsFragmentArgs.fromBundle(getArguments()).getCredential();
+        mViewModel.setup(credential, CredentialDetailsAction.DELETE);
+        setClaimData(credential);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                this.remove();
-                requireActivity().onBackPressed();
-                mAction.onCancel();
+                mViewModel.navigateBack();
             }
-        });
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
+
     }
 
     @Override
@@ -63,16 +55,16 @@ public class CredentialDetailsFragment extends BaseFragment<FragmentCredentialDe
     }
 
     private void setClaimData(Credential credential) {
-        getViewBinding().btnAction.setText(mActionLabel);
+        getViewBinding().btnAction.setText(R.string.delete_claim);
+
         Bitmap image = BitmapUtil.getBitmapFromClaim(credential.getClaim());
         if (image != null) {
             getViewBinding().credentialImage.setImageBitmap(image);
         }
         getViewBinding().viewExpired.setVisibility(credential.isRevoked() ? View.VISIBLE : View.GONE);
-        getViewBinding().btnAction.setOnClickListener(v -> {
-            requireActivity().getSupportFragmentManager().popBackStack();
-            mAction.onActionClick(mCredential.getClaim());
-        });
+
+        getViewBinding().btnAction.setOnClickListener(v -> mViewModel.performAction());
+
         setRecyclerView(credential.getClaim().getData());
     }
 

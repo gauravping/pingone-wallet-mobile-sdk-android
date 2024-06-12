@@ -9,18 +9,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.pingidentity.sdk.pingonewallet.sample.databinding.ItemCredentialCardBinding;
 import com.pingidentity.sdk.pingonewallet.sample.models.Credential;
 import com.pingidentity.sdk.pingonewallet.sample.rv_adapters.view_holders.CardViewHolder;
-import com.pingidentity.sdk.pingonewallet.sample.callbacks.DocumentClickListener;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class CardsListAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
     public static final String TAG = CardsListAdapter.class.getCanonicalName();
 
     private final List<Credential> mCardsList;
-    private final DocumentClickListener mCallback;
+    private final Consumer<Credential> mCallback;
 
-    public CardsListAdapter(final List<Credential> cardsList, DocumentClickListener callback) {
+    public CardsListAdapter(final List<Credential> cardsList, Consumer<Credential> callback) {
         this.mCardsList = cardsList;
         this.mCallback = callback;
     }
