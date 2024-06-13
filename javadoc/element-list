@@ -1,0 +1,16 @@
+com.pingidentity.sdk.pingonewallet
+com.pingidentity.sdk.pingonewallet.appevents
+com.pingidentity.sdk.pingonewallet.client
+com.pingidentity.sdk.pingonewallet.contracts
+com.pingidentity.sdk.pingonewallet.errors
+com.pingidentity.sdk.pingonewallet.storage
+com.pingidentity.sdk.pingonewallet.storage.data_repository
+com.pingidentity.sdk.pingonewallet.storage.encrypted_storage
+com.pingidentity.sdk.pingonewallet.storage.storage_manager
+com.pingidentity.sdk.pingonewallet.types
+com.pingidentity.sdk.pingonewallet.types.regions
+com.pingidentity.sdk.pingonewallet.types.WalletEvents
+com.pingidentity.sdk.pingonewallet.types.WalletMessage
+com.pingidentity.sdk.pingonewallet.types.WalletMessage.credential
+com.pingidentity.sdk.pingonewallet.types.WalletMessage.pairing
+com.pingidentity.sdk.pingonewallet.utils
