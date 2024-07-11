@@ -1,4 +1,4 @@
-package com.pingidentity.sdk.pingonewallet.sample.wallet;
+package com.pingidentity.sdk.pingonewallet.sample.ui;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -9,14 +9,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.pingidentity.did.sdk.types.Claim;
 import com.pingidentity.sdk.pingonewallet.sample.R;
 import com.pingidentity.sdk.pingonewallet.sample.models.Credential;
+import com.pingidentity.sdk.pingonewallet.sample.notifications.PingOneNotificationService;
 import com.pingidentity.sdk.pingonewallet.sample.ui.home.HomeFragmentDirections;
 import com.pingidentity.sdk.pingonewallet.sample.ui.picker.PickerSharedViewModel;
-import com.pingidentity.sdk.pingonewallet.sample.ui.picker.picker_default.DefaultCredentialPicker;
+import com.pingidentity.sdk.pingonewallet.sample.wallet.interfaces.ApplicationUiHandler;
+import com.pingidentity.sdk.pingonewallet.sample.wallet.interfaces.NotificationServiceHelper;
 import com.pingidentity.sdk.pingonewallet.types.ClaimKeys;
 import com.pingidentity.sdk.pingonewallet.utils.BackgroundThreadHandler;
 
@@ -100,7 +103,7 @@ public class ApplicationUiHandlerImpl implements ApplicationUiHandler {
         mContextWeakReference.get().startActivity(redirectUriIntent);
     }
 
-    public void selectCredentialForPresentation(List<Claim> credentials, DefaultCredentialPicker.OnCredentialPicked onItemPicked) {
+    public void selectCredentialForPresentation(List<Claim> credentials, Consumer<Claim> consumer) {
         if (mContextWeakReference.get() == null) {
             Log.e(TAG, "FragmentManager reference nonexistent, cannot display UI element");
             return;
@@ -111,16 +114,37 @@ public class ApplicationUiHandlerImpl implements ApplicationUiHandler {
                 .map(claim -> new Credential(claim, false))
                 .toArray(Credential[]::new);
 
-        Navigation.findNavController(mContextWeakReference.get().getCurrentFocus())
+
+        openPicker(claims, consumer, mContextWeakReference.get());
+    }
+
+    private void openPicker(Credential[] claims, Consumer<Claim> consumer, FragmentActivity context) {
+        final NavController navController;
+        try {
+             navController = Navigation.findNavController(context, R.id.fragment_container);
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "Failed to get NavController", e);
+            return;
+        }
+
+        navController
                 .navigate(HomeFragmentDirections.actionHomeFragmentToItemPickerFragment(claims));
 
-        PickerSharedViewModel pickerSharedViewModel = new ViewModelProvider(mContextWeakReference.get()).get(PickerSharedViewModel.class);
-        pickerSharedViewModel.getPickedCredential().observe(mContextWeakReference.get(), claim -> {
-            if (claim != null) {
-                onItemPicked.onPicked(claim);
-                pickerSharedViewModel.setCredential(null);
-            }
+        BackgroundThreadHandler.postOnMainThread(() -> {
+            PickerSharedViewModel pickerSharedViewModel = new ViewModelProvider(mContextWeakReference.get()).get(PickerSharedViewModel.class);
+            pickerSharedViewModel.getPickedCredential().observe(mContextWeakReference.get(), claim -> {
+                if (claim != null) {
+                    pickerSharedViewModel.clearCredential();
+                    consumer.accept(claim);
+                    pickerSharedViewModel.getPickedCredential().removeObservers(mContextWeakReference.get());
+                }
+            });
         });
+    }
+
+    @Override
+    public NotificationServiceHelper getNotificationServiceHelper() {
+        return PingOneNotificationService.getNotificationServiceHelper();
     }
 
 }

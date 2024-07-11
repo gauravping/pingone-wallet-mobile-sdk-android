@@ -1,38 +1,31 @@
 package com.pingidentity.sdk.pingonewallet.sample.ui;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.fragment.NavHostFragment;
-
-import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.pingidentity.did.sdk.types.Claim;
 import com.pingidentity.sdk.pingonewallet.sample.MainApplication;
 import com.pingidentity.sdk.pingonewallet.sample.R;
 import com.pingidentity.sdk.pingonewallet.sample.databinding.ActivityMainBinding;
-import com.pingidentity.sdk.pingonewallet.sample.models.Credential;
-import com.pingidentity.sdk.pingonewallet.sample.ui.home.HomeFragmentDirections;
-import com.pingidentity.sdk.pingonewallet.sample.ui.picker.PickerSharedViewModel;
-import com.pingidentity.sdk.pingonewallet.sample.ui.picker.picker_default.DefaultCredentialPicker;
-import com.pingidentity.sdk.pingonewallet.sample.wallet.ApplicationUiHandler;
+import com.pingidentity.sdk.pingonewallet.sample.ui.picker.default_impl.DefaultCredentialPicker;
 import com.pingidentity.sdk.pingonewallet.sample.wallet.PingOneWalletHelper;
-import com.pingidentity.sdk.pingonewallet.types.ClaimKeys;
-import com.pingidentity.sdk.pingonewallet.utils.BackgroundThreadHandler;
+import com.pingidentity.sdk.pingonewallet.sample.wallet.interfaces.ApplicationUiHandler;
+import com.pingidentity.sdk.pingonewallet.sample.wallet.interfaces.NotificationServiceHelper;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -44,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements ApplicationUiHand
     private ActivityMainBinding binding;
     private NavController navController;
 
+    private ApplicationUiHandler applicationUiHandler = ApplicationUiHandlerImpl.getInstance(this);
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -138,63 +132,33 @@ public class MainActivity extends AppCompatActivity implements ApplicationUiHand
     //////////////////// Notifications ////////////////////
 
     public void showAlert(int title, int message) {
-        showAlert(getString(title), getString(message));
+        applicationUiHandler.showAlert(title, message);
     }
 
     public void showAlert(String title, String message) {
-        BackgroundThreadHandler.postOnMainThread(() ->
-                new AlertDialog.Builder(this)
-                        .setTitle(title)
-                        .setMessage(message)
-                        .setPositiveButton(R.string.dialog_confirm, (dialog, which) -> dialog.dismiss())
-                        .show());
+        applicationUiHandler.showAlert(title, message);
     }
 
     public void showToast(String text) {
-        BackgroundThreadHandler.postOnMainThread(() -> Toast.makeText(this, text, Toast.LENGTH_SHORT).show());
+        applicationUiHandler.showToast(text);
     }
 
     public void showConfirmationAlert(int title, int message, @NonNull final Consumer<Boolean> consumer) {
-        BackgroundThreadHandler.postOnMainThread(() ->
-                new AlertDialog.Builder(this)
-                        .setTitle(title)
-                        .setMessage(message)
-                        .setPositiveButton(R.string.button_confirm, (dialog, which) -> consumer.accept(true))
-                        .setNegativeButton(R.string.dialog_share_cancel, (dialog, which) -> {
-                            dialog.dismiss();
-                            consumer.accept(false);
-                        })
-                        .show());
+        applicationUiHandler.showConfirmationAlert(title, message, consumer);
     }
 
     public void openUri(@NonNull final String uri) {
-        Intent redirectUriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-        startActivity(redirectUriIntent);
+        applicationUiHandler.openUri(uri);
     }
 
-    public void selectCredentialForPresentation(List<Claim> credentials, DefaultCredentialPicker.OnCredentialPicked itemPickerListener) {
-
-        Credential[] claims = credentials.stream()
-                .filter(claim -> claim.getData().get(ClaimKeys.cardType) != null)
-                .map(claim -> new Credential(claim, false))
-                .toArray(Credential[]::new);
-
-        openPicker(claims, itemPickerListener);
+    public void selectCredentialForPresentation(List<Claim> credentials, Consumer<Claim> consumer) {
+        applicationUiHandler.selectCredentialForPresentation(credentials, consumer);
     }
 
-    private void openPicker(Credential[] claims, DefaultCredentialPicker.OnCredentialPicked itemPickerListener) {
-        navController.navigate(HomeFragmentDirections.actionHomeFragmentToItemPickerFragment(claims));
-
-        BackgroundThreadHandler.postOnMainThread(() -> {
-            PickerSharedViewModel pickerSharedViewModel = new ViewModelProvider(this).get(PickerSharedViewModel.class);
-            pickerSharedViewModel.getPickedCredential().observe(this, claim -> {
-                if (claim != null) {
-                    pickerSharedViewModel.clearCredential();
-                    itemPickerListener.onPicked(claim);
-                    pickerSharedViewModel.getPickedCredential().removeObservers(this);
-                }
-            });
-        });
+    @Override
+    public NotificationServiceHelper getNotificationServiceHelper() {
+        return applicationUiHandler.getNotificationServiceHelper();
     }
+
 
 }

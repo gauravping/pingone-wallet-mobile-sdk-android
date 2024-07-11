@@ -1,7 +1,7 @@
-package com.pingidentity.sdk.pingonewallet.sample.ui.picker.picker_default;
+package com.pingidentity.sdk.pingonewallet.sample.ui.picker.default_impl;
 
 import com.pingidentity.did.sdk.types.Claim;
-import com.pingidentity.sdk.pingonewallet.sample.ui.picker.picker_abstract.CredentialPickerListener;
+import com.pingidentity.sdk.pingonewallet.sample.wallet.interfaces.CredentialPickerListener;
 import com.pingidentity.sdk.pingonewallet.types.CredentialsPresentation;
 import com.pingidentity.sdk.pingonewallet.types.PresentationRequest;
 

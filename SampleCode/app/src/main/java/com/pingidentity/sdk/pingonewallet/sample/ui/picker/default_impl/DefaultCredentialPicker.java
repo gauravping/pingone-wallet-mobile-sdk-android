@@ -1,9 +1,9 @@
-package com.pingidentity.sdk.pingonewallet.sample.ui.picker.picker_default;
+package com.pingidentity.sdk.pingonewallet.sample.ui.picker.default_impl;
 
 import com.pingidentity.did.sdk.types.Claim;
-import com.pingidentity.sdk.pingonewallet.sample.ui.picker.picker_abstract.CredentialPicker;
-import com.pingidentity.sdk.pingonewallet.sample.ui.picker.picker_abstract.CredentialPickerListener;
-import com.pingidentity.sdk.pingonewallet.sample.wallet.ApplicationUiHandler;
+import com.pingidentity.sdk.pingonewallet.sample.wallet.interfaces.ApplicationUiHandler;
+import com.pingidentity.sdk.pingonewallet.sample.wallet.interfaces.CredentialPicker;
+import com.pingidentity.sdk.pingonewallet.sample.wallet.interfaces.CredentialPickerListener;
 import com.pingidentity.sdk.pingonewallet.types.CredentialMatcherResult;
 import com.pingidentity.sdk.pingonewallet.types.CredentialsPresentation;
 import com.pingidentity.sdk.pingonewallet.types.PresentationRequest;
@@ -56,16 +56,14 @@ public class DefaultCredentialPicker implements CredentialPicker {
     }
 
     private void selectCredentialForPresentation(CredentialMatcherResult credentialMatcherResult, CredentialPickerListener listener) {
-        OnCredentialPicked onCredentialPicked = claim -> {
+        applicationUiCallbackHandler.selectCredentialForPresentation(credentialMatcherResult.getClaims(), claim -> {
             if (claim == null) {
                 listener.onPickerCanceled();
                 return;
             }
             listener.onCredentialPicked(claim, credentialMatcherResult.getRequestedKeys());
             selectCredentialToPresent(nextCredentialIndex, listener);
-        };
-
-        applicationUiCallbackHandler.selectCredentialForPresentation(credentialMatcherResult.getClaims(), onCredentialPicked);
+        });
     }
 
 }

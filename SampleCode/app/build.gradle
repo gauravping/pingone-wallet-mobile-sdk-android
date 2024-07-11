@@ -34,6 +34,7 @@ android {
     namespace 'com.pingidentity.sdk.pingonewallet.sample'
 }
 
+
 dependencies {
     implementation fileTree(dir: '../../SDK/', include: ['*.aar'], exclude: [])
 
@@ -90,5 +91,4 @@ dependencies {
 
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
 }
-
 apply plugin: 'com.google.gms.google-services'

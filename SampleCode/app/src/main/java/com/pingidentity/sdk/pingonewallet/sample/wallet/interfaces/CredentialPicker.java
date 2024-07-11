@@ -1,4 +1,4 @@
-package com.pingidentity.sdk.pingonewallet.sample.ui.picker.picker_abstract;
+package com.pingidentity.sdk.pingonewallet.sample.wallet.interfaces;
 
 import com.pingidentity.sdk.pingonewallet.types.CredentialMatcherResult;
 import com.pingidentity.sdk.pingonewallet.types.CredentialsPresentation;
