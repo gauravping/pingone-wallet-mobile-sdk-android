@@ -28,6 +28,7 @@ import com.pingidentity.sdk.pingonewallet.types.WalletEvents.WalletError;
 import com.pingidentity.sdk.pingonewallet.types.WalletEvents.WalletEvent;
 import com.pingidentity.sdk.pingonewallet.types.WalletEvents.WalletPairingEvent;
 import com.pingidentity.sdk.pingonewallet.types.WalletMessage.credential.CredentialAction;
+import com.pingidentity.sdk.pingonewallet.types.regions.PingOneRegion;
 import com.pingidentity.sdk.pingonewallet.utils.BackgroundThreadHandler;
 
 import java.lang.ref.WeakReference;
@@ -49,7 +50,7 @@ public class PingOneWalletHelper implements WalletCallbackHandler {
     private CredentialPicker credentialPicker;
 
     public static void initializeWallet(FragmentActivity context, Consumer<PingOneWalletHelper> onResult, Consumer<Throwable> onError) {
-        Completable.fromRunnable(() -> new PingOneWalletClient.Builder()
+        Completable.fromRunnable(() -> new PingOneWalletClient.Builder(true, PingOneRegion.NA)
                         .build(context, pingOneWalletClient -> {
                             final PingOneWalletHelper helper = new PingOneWalletHelper(pingOneWalletClient, context);
                             onResult.accept(helper);
