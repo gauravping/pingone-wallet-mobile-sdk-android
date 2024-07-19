@@ -41,6 +41,11 @@
                 <action android:name="android.intent.action.VIEW" />
 
                 <data
+                    android:host="neowallet.ping-eng.com"
+                    android:pathPrefix="/appopen"
+                    android:scheme="https" />
+                    
+                <data
                     android:host="shocard.pingone.com"
                     android:pathPrefix="/appopen"
                     android:scheme="https" />
