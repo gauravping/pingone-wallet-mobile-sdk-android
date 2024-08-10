@@ -1,5 +1,6 @@
 package com.pingidentity.sdk.pingonewallet.sample.wallet;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -49,6 +50,8 @@ public class PingOneWalletHelper implements WalletCallbackHandler {
     private ApplicationUiHandler applicationUiHandler;
     private CredentialPicker credentialPicker;
 
+    private String redirectUri = null;
+
     public static void initializeWallet(FragmentActivity context, Consumer<PingOneWalletHelper> onResult, Consumer<Throwable> onError) {
         Completable.fromRunnable(() -> new PingOneWalletClient.Builder(true, PingOneRegion.NA)
                         .build(context, pingOneWalletClient -> {
@@ -89,7 +92,16 @@ public class PingOneWalletHelper implements WalletCallbackHandler {
     }
 
     public void processPingOneRequest(@NonNull final String qrContent) {
-        pingOneWalletClient.processPingOneRequest(qrContent);
+        if (qrContent.contains("redirect_url")) {
+            Uri uri = Uri.parse(qrContent);
+            String urlParam = uri.getQueryParameter("redirect_url");
+            if (urlParam != null) {
+                this.redirectUri = urlParam;
+            }
+            pingOneWalletClient.processPingOneRequest(qrContent.substring(0, qrContent.indexOf("&redirect_url=")));
+        } else {
+            pingOneWalletClient.processPingOneRequest(qrContent);
+        }
     }
 
     public void reportCredentialDeletion(@NonNull final Claim claim) {
@@ -238,6 +250,10 @@ public class PingOneWalletHelper implements WalletCallbackHandler {
                             switch (presentationResult.getPresentationStatus().getStatus()) {
                                 case SUCCESS:
                                     notifyUser("Information sent successfully");
+                                    if (redirectUri != null) {
+                                        handlePresentationAction(PresentationAction.newOpenUriAction(redirectUri));
+                                        redirectUri = null;
+                                    }
                                     break;
                                 case FAILURE:
                                     notifyUser("Failed to present credential");
