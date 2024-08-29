@@ -19,6 +19,7 @@ import com.pingidentity.sdk.pingonewallet.client.PingOneWalletClient;
 import com.pingidentity.sdk.pingonewallet.contracts.WalletCallbackHandler;
 import com.pingidentity.sdk.pingonewallet.errors.WalletException;
 import com.pingidentity.sdk.pingonewallet.sample.R;
+import com.pingidentity.sdk.pingonewallet.sample.notifications.PingOneNotificationService;
 import com.pingidentity.sdk.pingonewallet.sample.wallet.interfaces.ApplicationUiHandler;
 import com.pingidentity.sdk.pingonewallet.sample.wallet.interfaces.CredentialPicker;
 import com.pingidentity.sdk.pingonewallet.storage.data_repository.DataRepository;
@@ -55,10 +56,10 @@ public class PingOneWalletHelper implements WalletCallbackHandler {
 
     private String redirectUri = null;
 
-    public static void initializeWallet(FragmentActivity context, ApplicationUiHandler applicationUiHandler, Consumer<PingOneWalletHelper> onResult, Consumer<Throwable> onError) {
+    public static void initializeWallet(FragmentActivity context, Consumer<PingOneWalletHelper> onResult, Consumer<Throwable> onError) {
         Completable.fromRunnable(() -> new PingOneWalletClient.Builder(true, PingOneRegion.NA)
                         .build(context, pingOneWalletClient -> {
-                            final PingOneWalletHelper helper = new PingOneWalletHelper(pingOneWalletClient, context, applicationUiHandler);
+                            final PingOneWalletHelper helper = new PingOneWalletHelper(pingOneWalletClient, context);
                             onResult.accept(helper);
                         }, onError))
                 .subscribeOn(Schedulers.io())
@@ -80,13 +81,7 @@ public class PingOneWalletHelper implements WalletCallbackHandler {
 
 
         checkForMessages();
-    }
-
-    private PingOneWalletHelper(PingOneWalletClient client, FragmentActivity context, ApplicationUiHandler applicationUiHandler) {
-        this(client, context);
-
-        this.applicationUiHandler = applicationUiHandler;
-        this.applicationUiHandler.getNotificationServiceHelper().getNotificationData().observe(context, new Observer<Map<String, String>>() {
+        PingOneNotificationService.getNotificationServiceHelper().getNotificationData().observe(context, new Observer<Map<String, String>>() {
             @Override
             public void onChanged(Map<String, String> notificationData) {
                 client.processNotification(new HashMap<Object, Object>(notificationData));
