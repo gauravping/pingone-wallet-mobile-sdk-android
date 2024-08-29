@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements ApplicationUiHand
     }
 
     private void initWallet() {
-        PingOneWalletHelper.initializeWallet(this, helper -> {
+        PingOneWalletHelper.initializeWallet(this, this.applicationUiHandler, helper -> {
             setupDependencyInjection(helper);
             setupNavigation();
             askNotificationPermission();

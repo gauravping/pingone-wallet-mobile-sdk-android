@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
 
 import com.pingidentity.did.sdk.client.service.NotFoundException;
 import com.pingidentity.did.sdk.client.service.model.Challenge;
@@ -34,7 +35,9 @@ import com.pingidentity.sdk.pingonewallet.utils.BackgroundThreadHandler;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -52,10 +55,10 @@ public class PingOneWalletHelper implements WalletCallbackHandler {
 
     private String redirectUri = null;
 
-    public static void initializeWallet(FragmentActivity context, Consumer<PingOneWalletHelper> onResult, Consumer<Throwable> onError) {
+    public static void initializeWallet(FragmentActivity context, ApplicationUiHandler applicationUiHandler, Consumer<PingOneWalletHelper> onResult, Consumer<Throwable> onError) {
         Completable.fromRunnable(() -> new PingOneWalletClient.Builder(true, PingOneRegion.NA)
                         .build(context, pingOneWalletClient -> {
-                            final PingOneWalletHelper helper = new PingOneWalletHelper(pingOneWalletClient, context);
+                            final PingOneWalletHelper helper = new PingOneWalletHelper(pingOneWalletClient, context, applicationUiHandler);
                             onResult.accept(helper);
                         }, onError))
                 .subscribeOn(Schedulers.io())
@@ -77,6 +80,18 @@ public class PingOneWalletHelper implements WalletCallbackHandler {
 
 
         checkForMessages();
+    }
+
+    private PingOneWalletHelper(PingOneWalletClient client, FragmentActivity context, ApplicationUiHandler applicationUiHandler) {
+        this(client, context);
+
+        this.applicationUiHandler = applicationUiHandler;
+        this.applicationUiHandler.getNotificationServiceHelper().getNotificationData().observe(context, new Observer<Map<String, String>>() {
+            @Override
+            public void onChanged(Map<String, String> notificationData) {
+                client.processNotification(new HashMap<Object, Object>(notificationData));
+            }
+        });
     }
 
     public void setApplicationUiHandler(ApplicationUiHandler applicationUiHandler) {
